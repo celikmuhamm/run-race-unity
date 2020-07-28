@@ -10,6 +10,7 @@ public class TurningCylinder : InGameObject
     public float minSpeed = 10;
     public Vector3 rotationVector = new Vector3(0,1,0);
     public Vector3 centerOfMass;
+    public Rigidbody turningBody;
     private Rigidbody _rigidBody = null;
     private bool _isRigidBodySet = false;
 
@@ -17,22 +18,14 @@ public class TurningCylinder : InGameObject
     {
         racer.Die();
     }
-
-    private void OnDrawGizmos()
-    {
-        if (_isRigidBodySet)
-        { Gizmos.color= Color.red;
-          Gizmos.DrawSphere(transform.position +  _rigidBody.centerOfMass,2);
-        }
-    }
-
+    
     void FixedUpdate()
     {
         if (isEnabled)
         {
             if (!_isRigidBodySet)
             {
-                SetRigidBody( this.GetComponent<Rigidbody>());
+                SetRigidBody( turningBody);
             }
             rotationSpeed = _rigidBody.angularVelocity.magnitude;
          

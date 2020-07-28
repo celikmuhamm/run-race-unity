@@ -32,6 +32,8 @@ public class MovingPlatform : InGameObject
         _fallDelayCreator.Update();
     }
 
+   
+
     private void Completed()
     {
         if (state)

@@ -12,6 +12,7 @@ public class Racer : MonoBehaviour
     public Transform respawnPoint;
     public float reSpawnTime;
     public GameObject hitCollider;
+    public bool isActive = true;
     private float _maxSpeed = 1.0f;            // since we now moving racers with blend tree, there is no harm setting this value to "1". However, we may want to change in future design or project
     private float _minSpeed = 0.0f;
     private bool _speedUp = false;
@@ -21,6 +22,7 @@ public class Racer : MonoBehaviour
     private DelayFunction _delayGenerator;
     private Vector3[] _jointStartPositions;
     private Quaternion[] _jointStartRotations;
+    
     private void Start()
     {
         SetChildColliders(this.GetComponentsInChildren<Collider>());
@@ -34,6 +36,7 @@ public class Racer : MonoBehaviour
 
     void FixedUpdate()
     {
+        
         if (speed<_maxSpeed && _speedUp)
         {
             speed += acceleration * Time.deltaTime;
@@ -53,18 +56,48 @@ public class Racer : MonoBehaviour
         if (other.CompareTag("InGameObject"))
         {
             hitCollider = other.gameObject;
-            other.transform.parent.GetComponent<InGameObject>().makeAction(this);           
+            if (other.attachedRigidbody != null)
+            {
+                other.attachedRigidbody.transform.parent.GetComponent<InGameObject>().makeAction(this);
+                if (!isAI)
+                {
+                    controller.SetCameraTarget(other.transform);
+                }
+            }
+            else
+            {
+                other.transform.parent.GetComponent<InGameObject>().makeAction(this);
+                if (!isAI)
+                {
+                    controller.SetCameraTarget(other.transform);
+                }
+            }
+                   
         }
 
-        if (other.CompareTag("reSpawnPoint"))
+        else if (other.CompareTag("reSpawnPoint"))
         {
             respawnPoint = other.transform;
+        }
+
+        else if(other.CompareTag("end"))
+        {
+            Stop();
+            isActive = false;
+            if (!isAI)
+            {
+                controller.EndLevel();
+            }
         }
     }
     
     public void Run()
     {
-        _speedUp = true;
+        if (isActive)
+        {
+            _speedUp = true;
+        }
+        
     }
     public void Stop()
     {
@@ -148,11 +181,17 @@ public class Racer : MonoBehaviour
     {
         _animator.applyRootMotion = true;
         _animator.enabled = true;
-        _animator.Play("runTree");
+        _animator.Play("default");
         ActivateColliders(false);
         ActivateRigidBodies(false);
         this.GetComponent<Rigidbody>().isKinematic = false;
         this.GetComponent<Collider>().enabled = true;
         SetBodyToStart();
+        isActive = true;
+        if (!isAI)
+        {
+            controller.SetCameraTarget(this.transform);
+        }
+       
     }
 }

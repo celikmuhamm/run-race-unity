@@ -6,6 +6,9 @@ TagManager:
   tags:
   - InGameObject
   - reSpawnPoint
+  - platform
+  - end
+  - start
   layers:
   - Default
   - TransparentFX

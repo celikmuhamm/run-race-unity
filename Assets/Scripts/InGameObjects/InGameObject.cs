@@ -1,6 +1,8 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public abstract class InGameObject: MonoBehaviour
 {
@@ -10,8 +12,10 @@ public abstract class InGameObject: MonoBehaviour
     public string type = "Unknown";
     public bool isActive = false;
     public bool isEnabled = true;
-    public Vector3 positionOffsetVector;
+    
     public float levelMultiplier = 1;
+    public ObjectBoundaries boundaries;
+
     public virtual void  makeAction(Racer racer)
     {
         Debug.Log("BaseClass");
