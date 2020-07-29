@@ -4,17 +4,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class TurningCylinder : InGameObject
+public class QuadroTurningCylinder : InGameObject
 {
     public float rotationSpeed = 0;
     public float impulsePower = 0;
     public float minSpeed = 10;
-    public Vector3 rotationVector = new Vector3(0,1,0);
+    public Vector3 rotationVector = new Vector3(0, 1, 0);
     public Vector3 centerOfMass;
     public Rigidbody turningBody;
     private Rigidbody _rigidBody = null;
     private bool _isRigidBodySet = false;
-    private float variationTime = 0; 
+    private float variationTime = 0;
+
     private void Start()
     {
         variationTime = Time.time + Random.Range(0, variationTimer);
@@ -24,23 +25,22 @@ public class TurningCylinder : InGameObject
     {
         racer.Die();
     }
-    
+
     void FixedUpdate()
     {
-        if (isEnabled && variationTime< Time.time)
+        if (isEnabled && variationTime < Time.time)
         {
             if (!_isRigidBodySet)
             {
-                SetRigidBody( turningBody);
+                SetRigidBody(turningBody);
             }
+
             rotationSpeed = _rigidBody.angularVelocity.magnitude;
-         
-            if (rotationSpeed <= minSpeed*levelMultiplier)
+
+            if (rotationSpeed <= minSpeed * levelMultiplier)
             {
                 AddTourque();
             }
-
-            
         }
     }
 
@@ -53,6 +53,6 @@ public class TurningCylinder : InGameObject
 
     public void AddTourque()
     {
-        _rigidBody.AddTorque(Time.deltaTime*rotationVector*impulsePower,ForceMode.Impulse);
+        _rigidBody.AddTorque(Time.deltaTime * rotationVector * impulsePower, ForceMode.Impulse);
     }
 }

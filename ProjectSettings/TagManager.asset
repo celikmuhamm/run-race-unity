@@ -9,6 +9,7 @@ TagManager:
   - platform
   - end
   - start
+  - aiStop
   layers:
   - Default
   - TransparentFX

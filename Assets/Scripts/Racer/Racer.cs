@@ -2,7 +2,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/*
+ * Todo : implement the Racer Ability for various projects.
+ * This is the Character modified variation
+ * variation Notes:
+ *     The "isAI" bool is used for various actions and all of these actions can be removed from this class
+ *     This is because for now there is only two roles under the racer "ai" or "player". If there will be more roles,
+ *     then the actions using "isAI" bool should be transferred to more specific role classes along with the new roles.
+ * @variationDate: 7/26/2020
+ * @date : 4/20/2020
+ * @author : Safa Celik
+ */
+ 
 public class Racer : MonoBehaviour
 {
     public bool isAI = true;
@@ -13,7 +24,13 @@ public class Racer : MonoBehaviour
     public float reSpawnTime;
     public GameObject hitCollider;
     public bool isActive = true;
-    private float _maxSpeed = 1.0f;            // since we now moving racers with blend tree, there is no harm setting this value to "1". However, we may want to change in future design or project
+    public Vector3 aiOffsetVector;
+    
+    /* since we now moving racers with blend tree,
+     * there is no harm setting this value to "1".
+     * However, we may want to change in future design or project
+     */
+    private float _maxSpeed = 1.0f;
     private float _minSpeed = 0.0f;
     private bool _speedUp = false;
     private Animator _animator = null;
@@ -22,7 +39,7 @@ public class Racer : MonoBehaviour
     private DelayFunction _delayGenerator;
     private Vector3[] _jointStartPositions;
     private Quaternion[] _jointStartRotations;
-    
+
     private void Start()
     {
         SetChildColliders(this.GetComponentsInChildren<Collider>());
@@ -30,24 +47,29 @@ public class Racer : MonoBehaviour
         SetAnimator(this.GetComponent<Animator>());
         _delayGenerator = new DelayFunction();
         SetStartPositions();
-        ReSpawn(controller.startPoint.position);
-        
+        if (!isAI)
+        {
+            ReSpawn(controller.startPoint.position);
+        }
+        else
+        {
+            Spawn();
+        }
     }
 
     void FixedUpdate()
     {
-        
-        if (speed<_maxSpeed && _speedUp)
+        if (speed < _maxSpeed && _speedUp)
         {
             speed += acceleration * Time.deltaTime;
-            _animator.SetFloat("Speed",speed);
-
+            _animator.SetFloat("Speed", speed);
         }
-        else if(!_speedUp && speed > _minSpeed)
+        else if (!_speedUp && speed > _minSpeed)
         {
             speed -= acceleration * Time.deltaTime;
-            _animator.SetFloat("Speed",speed);
+            _animator.SetFloat("Speed", speed);
         }
+
         _delayGenerator.Update();
     }
 
@@ -72,7 +94,6 @@ public class Racer : MonoBehaviour
                     controller.SetCameraTarget(other.transform);
                 }
             }
-                   
         }
 
         else if (other.CompareTag("reSpawnPoint"))
@@ -80,7 +101,7 @@ public class Racer : MonoBehaviour
             respawnPoint = other.transform;
         }
 
-        else if(other.CompareTag("end"))
+        else if (other.CompareTag("end"))
         {
             Stop();
             isActive = false;
@@ -90,15 +111,15 @@ public class Racer : MonoBehaviour
             }
         }
     }
-    
+
     public void Run()
     {
         if (isActive)
         {
             _speedUp = true;
         }
-        
     }
+
     public void Stop()
     {
         _speedUp = false;
@@ -113,17 +134,32 @@ public class Racer : MonoBehaviour
         this.GetComponent<Collider>().enabled = false;
         if (!isAI)
         {
-            _delayGenerator.Delay(controller.CheckForRemainingLife,reSpawnTime);
+            _delayGenerator.Delay(controller.CheckForRemainingLife, reSpawnTime);
         }
+        else
+        {
+            _delayGenerator.Delay(ReSpawnAI, reSpawnTime);
+        }
+    }
 
+    private void ReSpawnAI()
+    {
+        ReSpawn(respawnPoint.position);
     }
 
     public void ReSpawn(Vector3 position)
     {
-        
         Spawn();
-        this.transform.position = position;
+        if (isAI)
+        {
+            this.transform.position = position + aiOffsetVector;
+        }
+        else
+        {
+            this.transform.position = position;
+        }
     }
+
     public void ActivateColliders(bool decision)
     {
         foreach (var collider in _childColliders)
@@ -139,6 +175,7 @@ public class Racer : MonoBehaviour
             rigidBody.isKinematic = !decision;
         }
     }
+
     public void SetAnimator(Animator racerAnimator)
     {
         _animator = racerAnimator;
@@ -159,7 +196,7 @@ public class Racer : MonoBehaviour
         int childCount = _ragDollBodies.Length;
         _jointStartPositions = new Vector3[childCount];
         _jointStartRotations = new Quaternion[childCount];
-        for (int i = 0;i<childCount; i++ )
+        for (int i = 0; i < childCount; i++)
         {
             _jointStartPositions[i] = _ragDollBodies[i].transform.position;
             _jointStartRotations[i] = _ragDollBodies[i].transform.rotation;
@@ -169,11 +206,11 @@ public class Racer : MonoBehaviour
     private void SetBodyToStart()
     {
         int childCount = _ragDollBodies.Length;
-        
-        for (int i = 0;i<childCount; i++ )
+
+        for (int i = 0; i < childCount; i++)
         {
-            _ragDollBodies[i].transform.position =  _jointStartPositions[i] ;
-            _ragDollBodies[i].transform.rotation = _jointStartRotations[i] ;
+            _ragDollBodies[i].transform.position = _jointStartPositions[i];
+            _ragDollBodies[i].transform.rotation = _jointStartRotations[i];
         }
     }
 
@@ -192,6 +229,5 @@ public class Racer : MonoBehaviour
         {
             controller.SetCameraTarget(this.transform);
         }
-       
     }
 }

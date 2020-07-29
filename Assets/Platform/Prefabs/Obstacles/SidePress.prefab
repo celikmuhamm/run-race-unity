@@ -110,7 +110,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 124
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!65 &452544318747263468
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -370,6 +370,7 @@ MonoBehaviour:
       m_Extent: {x: 0, y: 0, z: 0}
     positionOffsetVector: {x: 0, y: 0, z: 0}
     endPosition: {x: 0, y: 0, z: 0}
+  variationTimer: 2
   rewindTime: 3
   forceTime: 1.5
   forceAmount: 20
@@ -487,7 +488,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 124
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!65 &452544320135830461
 BoxCollider:
   m_ObjectHideFlags: 0

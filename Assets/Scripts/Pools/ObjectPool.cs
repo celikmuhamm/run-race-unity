@@ -14,6 +14,7 @@ public class ObjectPool : MonoBehaviour
     public GameObject objectParent;
     public GameObject instanceParent;
     public ObjectFactory factory;
+    public int minObjectCount = 4;
     public List<string> objectGroupNames;
     public List<int> poolSizes;
 
@@ -23,6 +24,7 @@ public class ObjectPool : MonoBehaviour
         factory.objectGroups = objectGroupNames;
         factory.setIngameObjects(objectParent);
         factory.instanceParent = instanceParent.transform;
+        factory.minObjectCount = minObjectCount;
         _pools = new List<MyQueue<InGameObject>>();
         for (int i = 0; i < objectGroupNames.Count; i++)
         {

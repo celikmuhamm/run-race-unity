@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class SidePress : InGameObject
 {
@@ -16,37 +17,37 @@ public class SidePress : InGameObject
     private bool _leftRewinded = false;
 
     private float rewindTimer = 0;
-    
+
     private float forceTimer = 0;
 
     private void Start()
     {
-        rewindTimer = Time.time + rewindTime;
+        rewindTimer = Time.time + rewindTime + Random.Range(0, variationTimer);
     }
 
     private void FixedUpdate()
     {
-        if (Time.time < rewindTimer )
+        if (Time.time < rewindTimer)
         {
             if (!_rightRewinded)
             {
-                rewindPress(rightPress,1);
+                rewindPress(rightPress, 1);
             }
+
             if (!_leftRewinded)
             {
-                rewindPress(leftPress,-1);
+                rewindPress(leftPress, -1);
             }
-           
         }
-        else if(forceTimer< Time.time && !_leftRewinded&&!_rightRewinded)
+        else if (forceTimer < Time.time && !_leftRewinded && !_rightRewinded)
         {
             rewindTimer = Time.time + rewindTime;
-            
-        }else if (forceTimer< Time.time&&_rightRewinded && _leftRewinded)
+        }
+        else if (forceTimer < Time.time && _rightRewinded && _leftRewinded)
         {
             forceTimer = Time.time + forceTime;
-            leftPress.GetComponent<Rigidbody>().velocity =  forceAmount*-1*levelMultiplier*-reverseSpeed;
-            rightPress.GetComponent<Rigidbody>().velocity =  forceAmount*levelMultiplier*-reverseSpeed;
+            leftPress.GetComponent<Rigidbody>().velocity = forceAmount * -1 * levelMultiplier * -reverseSpeed;
+            rightPress.GetComponent<Rigidbody>().velocity = forceAmount * levelMultiplier * -reverseSpeed;
             _rightRewinded = false;
             _leftRewinded = false;
         }
@@ -57,11 +58,11 @@ public class SidePress : InGameObject
         racer.Die();
     }
 
-    private void rewindPress(Transform press,int side)
+    private void rewindPress(Transform press, int side)
     {
         if (Math.Abs(press.position.x) < sideDistance)
         {
-            press.GetComponent<Rigidbody>().velocity =  reverseSpeed*side;
+            press.GetComponent<Rigidbody>().velocity = reverseSpeed * side;
         }
         else
         {

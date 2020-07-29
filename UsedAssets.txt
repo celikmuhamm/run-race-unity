@@ -1,0 +1,3 @@
+DoTween - Bana ait değil
+Kullanım süresi: Bu proje ile birlikte
+Kullanım Nedeni: Genellikle Animasyon, AnimationCurve ya da custom scriptler kullanıyorum. Bu projede hızlı üretim için Tweening tool kullanmayı doğru buldum.

@@ -2,11 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
     public Transform healthGroup;
-
+    public Text levelText;
     private Transform[] healthObjects;
     public void CreateHealthBar(int healthCount)
     {
@@ -30,5 +31,10 @@ public class UIController : MonoBehaviour
     public void Updatehealth(int healthCount)
     {
         healthObjects[healthCount].gameObject.SetActive(false);
+    }
+
+    public void SetLevelText(string text)
+    {
+        levelText.text = text;
     }
 }

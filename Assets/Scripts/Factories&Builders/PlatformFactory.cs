@@ -7,7 +7,7 @@ public sealed class PlatformFactory
 {
     public ObjectPool pool;
     public static PlatformFactory instance;
-    private InGamePlatform inGamePlatform;
+    private InGamePlatform _inGamePlatform;
     public static PlatformFactory GetInstance()
     {
         if (instance == null)
@@ -19,14 +19,15 @@ public sealed class PlatformFactory
 
     public IPlatform GetPlatform(PlatformConfig config)
     {
-        if (inGamePlatform == null)
-        {
-            inGamePlatform = new InGamePlatform();
-        }
+       
         if (pool.objectGroupNames.Contains(config.name))
         {
-            inGamePlatform.pool = pool;
-            return inGamePlatform;
+            if (_inGamePlatform == null)
+            {
+                _inGamePlatform = new InGamePlatform();
+            }
+            _inGamePlatform.pool = pool;
+            return _inGamePlatform;
         }
         else
         {
