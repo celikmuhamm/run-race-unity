@@ -37,15 +37,19 @@ public class Racer : MonoBehaviour
     private Collider[] _childColliders;
     private Rigidbody[] _ragDollBodies;
     private DelayFunction _delayGenerator;
+    private DelayFunction _materialDelay;
+    private List<Material> _effectedMaterials;
     private Vector3[] _jointStartPositions;
     private Quaternion[] _jointStartRotations;
-
+   
     private void Start()
     {
+        _effectedMaterials = new List<Material>();
         SetChildColliders(this.GetComponentsInChildren<Collider>());
         SetChildBodies(this.GetComponentsInChildren<Rigidbody>());
         SetAnimator(this.GetComponent<Animator>());
         _delayGenerator = new DelayFunction();
+        _materialDelay = new DelayFunction();
         SetStartPositions();
         if (!isAI)
         {
@@ -71,6 +75,7 @@ public class Racer : MonoBehaviour
         }
 
         _delayGenerator.Update();
+        _materialDelay.Update();
     }
 
     private void OnTriggerEnter(Collider other)
@@ -84,6 +89,7 @@ public class Racer : MonoBehaviour
                 if (!isAI)
                 {
                     controller.SetCameraTarget(other.transform);
+                    
                 }
             }
             else
@@ -94,6 +100,20 @@ public class Racer : MonoBehaviour
                     controller.SetCameraTarget(other.transform);
                 }
             }
+
+            if (!isAI)
+            {
+                
+                if (hitCollider.GetComponent<MeshRenderer>()!= null && 
+                    hitCollider.GetComponent<MeshRenderer>().material.HasProperty("Boolean_DDA422C6"))
+                {
+                    Material effectMat = hitCollider.GetComponent<MeshRenderer>().material;
+                    effectMat.SetFloat("Boolean_DDA422C6",1);
+                    _effectedMaterials.Add(effectMat);
+                    _materialDelay.Delay(SetMaterialToNormal,reSpawnTime);
+                }
+            }
+            
         }
 
         else if (other.CompareTag("reSpawnPoint"))
@@ -229,5 +249,14 @@ public class Racer : MonoBehaviour
         {
             controller.SetCameraTarget(this.transform);
         }
+    }
+
+    private void SetMaterialToNormal()
+    {
+        foreach (var material in _effectedMaterials)
+        {
+            material.SetFloat("Boolean_DDA422C6",0);
+        }
+        _effectedMaterials = new List<Material>();
     }
 }
